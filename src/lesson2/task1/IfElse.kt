@@ -75,9 +75,7 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     return when {
-        age in 11..19 -> "$age лет"
-        age in 111..119 -> "$age лет"
-        age % 10 == 0 -> "$age лет"
+        age % 100 in 11..19 -> "$age лет"
         age % 10 == 1 -> "$age год"
         age % 10 in 2..4 -> "$age года"
         else -> "$age лет"
@@ -122,13 +120,10 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    return when {
-        (kingX == rookX1) && (kingY == rookY2) -> 3
-        (kingX == rookX2) && (kingY == rookY1) -> 3
-        (kingX == rookX1) || (kingY == rookY1) -> 1
-        (kingX == rookX2) || (kingY == rookY2) -> 2
-        else -> 0
-    }
+    var result = 0
+    if ((kingX == rookX1) || (kingY == rookY1)) result += 1
+    if ((kingX == rookX2) || (kingY == rookY2)) result += 2
+    return result
 }
 
 /**
@@ -146,12 +141,10 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    return when {
-        ((abs(kingX - bishopX) == abs(kingY - bishopY)) && ((kingX == rookX) || (kingY == rookY))) -> 3
-        abs(kingX - bishopX) == abs(kingY - bishopY) -> 2
-        (kingX == rookX) || (kingY == rookY) -> 1
-        else -> 0
-    }
+    var result = 0
+    if ((kingX == rookX) || (kingY == rookY)) result += 1
+    if (abs(kingX - bishopX) == abs(kingY - bishopY)) result += 2
+    return result
 }
 
 /**
@@ -163,17 +156,17 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    return if ((a + b > c) && (b + c > a) && (a + c > b)) {
-        val x = minOf(a, b, c)
-        val z = maxOf(a, b, c)
-        val y = a + b + c - x - z
-        when {
+    val x = minOf(a, b, c)
+    val z = maxOf(a, b, c)
+    val y = a + b + c - x - z
+    return when {
+        x + y > z -> when {
             x * x + y * y == z * z -> 1
             x * x + y * y > z * z -> 0
             else -> 2
         }
-    } else
-        -1
+        else -> -1
+    }
 }
 
 
@@ -188,5 +181,5 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return if ((d < a) || (b < c))
         -1 else
-        min(b,d) - max(a,c)
+        min(b, d) - max(a, c)
 }

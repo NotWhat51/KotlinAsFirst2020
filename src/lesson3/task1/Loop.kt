@@ -262,12 +262,14 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
+    val arg = x % (2 * PI)
+    val numerator = -1.0 * arg * arg
     var result = 0.0
-    var term = x
+    var term = arg
     var n = 1
-    while (term >= eps) {
+    while (abs(term) >= eps) {
         result += term
-        term *= (-1 * x * x / (n + 1) / (n + 2))
+        term *= numerator / ((n + 1) * (n + 2))
         n += 2
     }
     return result
@@ -282,7 +284,19 @@ fun sin(x: Double, eps: Double): Double {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    val arg = x % (2 * PI)
+    val numerator = -1.0 * arg * arg
+    var result = 0.0
+    var term = 1.0
+    var n = 1
+    while (abs(term) >= eps) {
+        result += term
+        term *= numerator / (n * (n + 1))
+        n += 2
+    }
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -293,7 +307,25 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var sumNumber = 0
+    var difference = 0
+    var arg = 1
+    var lastNumber = arg * arg
+    var lenght = digitNumber(arg * arg)
+    while (sumNumber < n) {
+        sumNumber += lenght
+        arg++
+        lenght = digitNumber(arg * arg)
+    }
+    lastNumber = (arg - 1) * (arg - 1)
+    difference = sumNumber - n
+    while (difference > 0) {
+        lastNumber /= 10
+        difference--
+    }
+    return lastNumber % 10
+}
 
 /**
  * Сложная (5 баллов)
@@ -304,4 +336,22 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var sumNumber = 0
+    var difference = 0
+    var arg = 1
+    var lastNumber = 0
+    var length = digitNumber(fib(arg))
+    while (sumNumber < n) {
+        sumNumber += length
+        arg++
+        length = digitNumber(fib(arg))
+    }
+    lastNumber = fib(arg - 1)
+    difference = sumNumber - n
+    while (difference > 0) {
+        lastNumber /= 10
+        difference--
+    }
+    return lastNumber % 10
+}

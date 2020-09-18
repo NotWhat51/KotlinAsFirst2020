@@ -88,11 +88,18 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int =
-    when (n) {
-        1, 2 -> 1
-        else -> fib(n - 1) + fib(n - 2)
+fun fib(n: Int): Int {
+    if (n <= 1) return n
+    var previous = 0
+    var current = 1
+    var newCurrent = 0
+    for (i in 2..n) {
+        newCurrent = previous + current
+        previous = current
+        current = newCurrent
     }
+    return current
+}
 
 /**
  * Простая (2 балла)
@@ -100,11 +107,10 @@ fun fib(n: Int): Int =
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var min = 2
-    while (min <= n) {
-        if (n % min == 0) break else min++
+    for (i in 2..n / 2) {
+        if (n % i == 0) return i
     }
-    return min
+    return n
 }
 
 /**
@@ -113,11 +119,10 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var max = n - 1
-    while (max > 1) {
-        if (n % max == 0) break else max--
+    for (i in n / 2 downTo 1) {
+        if (n % i == 0) return i
     }
-    return max
+    return 1
 }
 
 /**
@@ -138,12 +143,10 @@ fun maxDivisor(n: Int): Int {
  */
 fun collatzSteps(x: Int): Int {
     var step = 0
-    var current = 0
-    var next = x
-    while (next != 1) {
+    var current = x
+    while (current != 1) {
         step++
-        current = next
-        next = if (current % 2 == 0) current / 2 else 3 * current + 1
+        current = if (current % 2 == 0) current / 2 else 3 * current + 1
     }
     return step
 }
@@ -154,14 +157,15 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    var a = m
-    var b = n
-    while (max(a, b) % min(a, b) != 0) {
-        if (a > b) a %= b else b %= a
+fun lcd(a: Int, b: Int): Int {
+    var x = a
+    var y = b
+    while ((x > 0) && (y > 0)) {
+        if (x > y) x %= y else y %= x
     }
-    return n * m / min(a, b)
+    return if (x > 0) x else y
 }
+fun lcm(m: Int, n: Int): Int = n / (lcd(n, m)) * m
 
 /**
  * Средняя (3 балла)
@@ -201,8 +205,8 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    var number = n / 10
-    var result = n % 10
+    var number = n
+    var result = 0
     while (number > 0) {
         result = result * 10 + number % 10
         number /= 10
@@ -220,19 +224,7 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 
-fun isPalindrome(n: Int): Boolean {
-    var digit = digitNumber(n) / 2
-    var count = 0
-    var number = n
-    var numberRevert = revert(n)
-    while (digit > 0) {
-        if (number % 10 == numberRevert % 10) count++
-        number /= 10
-        numberRevert /= 10
-        digit--
-    }
-    return count == digitNumber(n) / 2
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -243,13 +235,12 @@ fun isPalindrome(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var count = 0
     var number = n
     while (number >= 10) {
-        if (number % 10 != number % 100 / 10) count++
+        if (number % 10 != number % 100 / 10) return true
         number /= 10
     }
-    return count > 0
+    return false
 }
 
 /**
@@ -311,14 +302,13 @@ fun squareSequenceDigit(n: Int): Int {
     var sumNumber = 0
     var difference = 0
     var arg = 1
-    var lastNumber = arg * arg
     var lenght = digitNumber(arg * arg)
     while (sumNumber < n) {
         sumNumber += lenght
         arg++
         lenght = digitNumber(arg * arg)
     }
-    lastNumber = (arg - 1) * (arg - 1)
+    var lastNumber = (arg - 1) * (arg - 1)
     difference = sumNumber - n
     while (difference > 0) {
         lastNumber /= 10
@@ -340,14 +330,13 @@ fun fibSequenceDigit(n: Int): Int {
     var sumNumber = 0
     var difference = 0
     var arg = 1
-    var lastNumber = 0
     var length = digitNumber(fib(arg))
     while (sumNumber < n) {
         sumNumber += length
         arg++
         length = digitNumber(fib(arg))
     }
-    lastNumber = fib(arg - 1)
+    var lastNumber = fib(arg - 1)
     difference = sumNumber - n
     while (difference > 0) {
         lastNumber /= 10

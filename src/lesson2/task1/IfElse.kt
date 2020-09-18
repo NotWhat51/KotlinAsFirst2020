@@ -160,8 +160,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val x = minOf(a, b, c)
     val z = maxOf(a, b, c)
     val y = a + b + c - x - z
-    if (x + y < z) return -1
     return when {
+        x + y < z -> -1
         sqr(x) + sqr(y) == sqr(z) -> 1
         sqr(x) + sqr(y) > sqr(z) -> 0
         else -> 2

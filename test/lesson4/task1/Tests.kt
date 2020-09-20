@@ -55,19 +55,19 @@ class Tests {
         assertEquals(listOf(-1, -2, -4, -5), list2)
     }
 
-    @Test
-    @Tag("Example")
-    fun squares() {
-        assertEquals(listOf(0), squares(listOf(0)))
-        assertEquals(listOf(1, 4, 9), squares(listOf(1, 2, -3)))
-    }
+    // @Test
+    // @Tag("Example")
+    // fun squares() {
+    //     assertEquals(listOf(0), squares(listOf(0)))
+    //     assertEquals(listOf(1, 4, 9), squares(listOf(1, 2, -3)))
+    // }
 
-    @Test
-    @Tag("Example")
-    fun squaresVararg() {
-        assertArrayEquals(arrayOf(0), squares(0))
-        assertArrayEquals(arrayOf(1, 4, 9), squares(1, 2, -3))
-    }
+    //@Test
+    //@Tag("Example")
+    //fun squaresVararg() {
+    //    assertArrayEquals(arrayOf(0), squares(0))
+    //    assertArrayEquals(arrayOf(1, 4, 9), squares(1, 2, -3))
+    //}
 
     @Test
     @Tag("Example")

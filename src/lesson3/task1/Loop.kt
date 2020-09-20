@@ -89,7 +89,6 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    if (n <= 1) return n
     var previous = 0
     var current = 1
     var newCurrent = 0
@@ -107,7 +106,7 @@ fun fib(n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n / 2) {
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) return i
     }
     return n
@@ -119,7 +118,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n / 2 downTo 1) {
+    for (i in sqrt(n.toDouble()).toInt() downTo 1) {
         if (n % i == 0) return i
     }
     return 1
@@ -174,14 +173,7 @@ fun lcm(m: Int, n: Int): Int = n / (lcd(n, m)) * m
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = m
-    var b = n
-    while (max(a, b) % min(a, b) != 0) {
-        if (a > b) a %= b else b %= a
-    }
-    return min(a, b) == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = lcd(m, n) == 1
 
 /**
  * Средняя (3 балла)
@@ -235,12 +227,14 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var number = n
-    while (number >= 10) {
-        if (number % 10 != number % 100 / 10) return true
+    var number = n / 10
+    var count = 0
+    val last = n % 10
+    while (number > 0) {
+        if (number % 10 != last) count++
         number /= 10
     }
-    return false
+    return count > 0
 }
 
 /**

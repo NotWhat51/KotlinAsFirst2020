@@ -80,14 +80,14 @@ fun invertPositives(list: MutableList<Int>) {
  *
  * Из имеющегося списка целых чисел, сформировать список их квадратов
  */
-fun squares(list: List<Double>) = list.map { it * it }
+fun squares(list: List<Int>) = list.map { it * it }
 
 /**
  * Пример
  *
  * Из имеющихся целых чисел, заданного через vararg-параметр, сформировать массив их квадратов
  */
-//fun squares(vararg array: Int) = squares(array.toList()).toTypedArray()
+fun squares(vararg array: Int) = squares(array.toList()).toTypedArray()
 
 /**
  * Пример
@@ -121,7 +121,9 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(squares(v).sum()) else 0.0
+fun squares2(list: List<Double>) = list.map { it * it }
+
+fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(squares2(v).sum()) else 0.0
 
 /**
  * Простая (2 балла)

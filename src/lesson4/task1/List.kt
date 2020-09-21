@@ -411,7 +411,7 @@ fun russian(n: Int): CharSequence {
     }
     result.append(hundreds[number / 100])
     number %= 100
-    if (!(number > 10) || !(number < 20)) {
+    if ((number <= 10) || (number >= 20)) {
         result.append(tens[number / 10])
         result.append(units[number % 10])
     } else {

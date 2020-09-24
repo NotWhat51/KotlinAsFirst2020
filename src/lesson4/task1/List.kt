@@ -5,6 +5,8 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
 import kotlin.math.sqrt
+import kotlin.collections.listOf as listOf
+import kotlin.collections.mutableListOf as mutableListOf
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -121,9 +123,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun squares2(list: List<Double>) = list.map { it * it }
-
-fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(squares2(v).sum()) else 0.0
+fun abs(v: List<Double>): Double = sqrt(v.map { it * it }.sum())
 
 /**
  * Простая (2 балла)
@@ -141,14 +141,11 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isNotEmpty()) {
-        val difference = mean(list)
-        for (i in 0 until list.size) {
-            list[i] -= difference
-        }
-    }
+    val difference = mean(list)
+    list.replaceAll { it - difference }
     return list
 }
+
 
 /**
  * Средняя (3 балла)
@@ -158,11 +155,11 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    val result = mutableListOf<Int>()
+    var result = 0
     for (i in a.indices) {
-        result.add(a[i] * b[i])
+        result += a[i] * b[i]
     }
-    return result.sum()
+    return result
 }
 
 /**
@@ -174,16 +171,13 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    if (p.isNotEmpty()) {
-        var multiplier = 1
-        var px = mutableListOf<Int>()
-        for (i in p.indices) {
-            px.add(p[i] * multiplier)
-            multiplier *= x
-        }
-        return px.sum()
+    var multiplier = 1
+    var result = 0
+    for (element in p) {
+        result += element * multiplier
+        multiplier *= x
     }
-    return 0
+    return result
 }
 
 /**
@@ -197,14 +191,8 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isNotEmpty()) {
-        var sum = list.sum()
-        var temp = 0
-        for (i in (list.size - 1) downTo 0) {
-            temp = list[i]
-            list[i] = sum
-            sum -= temp
-        }
+    for (i in 1 until list.size) {
+        list[i] += list[i - 1]
     }
     return list
 }
@@ -217,16 +205,14 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    var result = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
     if (isPrime(n)) result.add(n) else {
         var i = 2
         var m = n
         while (m > 1) {
-            if (isPrime(i)) {
-                while (m % i == 0) {
-                    result.add(i)
-                    m /= i
-                }
+            while (m % i == 0) {
+                result.add(i)
+                m /= i
             }
             i++
         }
@@ -251,19 +237,13 @@ fun factorizeToString(n: Int): String = (factorize(n)).joinToString(separator = 
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
-    var result: MutableList<Int> = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
     var number = n
     while (number > 0) {
         result.add(number % base)
         number /= base
     }
-    var temp = 0
-    val size = result.size
-    for (i in 0 until size / 2) {
-        temp = result[i]
-        result[i] = result[size - i - 1]
-        result[size - i - 1] = temp
-    }
+    result.reverse()
     return result
 }
 
@@ -279,8 +259,8 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    var number = listOf<Int>()
-    number = convert(n, base)
+    /* 'a' + 1 = 'b'; 'b' - 'a' = 1 */
+    val number = convert(n, base)
     var result = ""
     for (element in number) {
         if (element < 10) {
@@ -323,7 +303,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var strCopy = str
-    var digit = 0
+    var digit: Int
     var result = 0
     var multiplier = 1
     while (strCopy.isNotEmpty()) {
@@ -347,7 +327,7 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     var number = n
-    var result = StringBuilder()
+    val result = StringBuilder()
     val thousands = listOf("", "M", "MM", "MMM")
     val hundreds = listOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
     val tens = listOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
@@ -371,7 +351,7 @@ fun roman(n: Int): String {
  */
 fun russian(n: Int): CharSequence {
     var number = n
-    var result = StringBuilder()
+    val result = StringBuilder()
     val hundreds = listOf(
         "", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ",
         "семьсот ", "восемьсот ", "девятьсот "

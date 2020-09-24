@@ -91,7 +91,7 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var previous = 0
     var current = 1
-    var newCurrent = 0
+    var newCurrent: Int
     for (i in 2..n) {
         newCurrent = previous + current
         previous = current
@@ -118,7 +118,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in sqrt(n.toDouble()).toInt() downTo 1) {
+    for (i in n / 2 downTo 1) {
         if (n % i == 0) return i
     }
     return 1
@@ -164,6 +164,7 @@ fun lcd(a: Int, b: Int): Int {
     }
     return if (x > 0) x else y
 }
+
 fun lcm(m: Int, n: Int): Int = n / (lcd(n, m)) * m
 
 /**
@@ -231,10 +232,10 @@ fun hasDifferentDigits(n: Int): Boolean {
     var count = 0
     val last = n % 10
     while (number > 0) {
-        if (number % 10 != last) count++
+        if (number % 10 != last) return true
         number /= 10
     }
-    return count > 0
+    return false
 }
 
 /**
@@ -294,7 +295,7 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun squareSequenceDigit(n: Int): Int {
     var sumNumber = 0
-    var difference = 0
+    var difference: Int
     var arg = 1
     var lenght = digitNumber(arg * arg)
     while (sumNumber < n) {
@@ -322,7 +323,7 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     var sumNumber = 0
-    var difference = 0
+    var difference: Int
     var arg = 1
     var length = digitNumber(fib(arg))
     while (sumNumber < n) {

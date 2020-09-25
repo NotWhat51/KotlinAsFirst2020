@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
 import kotlin.math.sqrt
+import lesson4.task1.decimal as decimal1
 import kotlin.collections.listOf as listOf
 import kotlin.collections.mutableListOf as mutableListOf
 
@@ -238,6 +239,10 @@ fun factorizeToString(n: Int): String = (factorize(n)).joinToString(separator = 
  */
 fun convert(n: Int, base: Int): List<Int> {
     val result = mutableListOf<Int>()
+    if (n == 0) {
+        result.add(n)
+        return result
+    }
     var number = n
     while (number > 0) {
         result.add(number % base)
@@ -259,17 +264,16 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    /* 'a' + 1 = 'b'; 'b' - 'a' = 1 */
     val number = convert(n, base)
-    var result = ""
+    val result = StringBuilder()
     for (element in number) {
         if (element < 10) {
-            result += element.toString()
+            result.append('0' + element)
         } else {
-            result += (element + 87).toChar()
+            result.append('a' + element - 10)
         }
     }
-    return result
+    return result.toString()
 }
 
 /**
@@ -302,18 +306,13 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var strCopy = str
+    val digits = mutableListOf<Int>()
     var digit: Int
-    var result = 0
-    var multiplier = 1
-    while (strCopy.isNotEmpty()) {
-        digit = strCopy.last().toInt()
-        digit -= if ((digit > 47) && (digit < 58)) 48 else 87
-        result += multiplier * digit
-        multiplier *= base
-        strCopy = strCopy.substring(0, strCopy.length - 1)
+    for (i in str.indices) {
+        digit = str[i].toInt()
+        if (digit in 48..58) digits.add(digit - 48) else digits.add(digit - 87)
     }
-    return result
+    return lesson4.task1.decimal(digits.toList(), base)
 }
 
 
@@ -382,7 +381,7 @@ fun russian(n: Int): CharSequence {
             number %= 10000
             result.append(unit2[number / 1000])
             when (number / 1000) {
-                0 -> result.append("тысяч ")
+                0, 5, 6, 7, 8, 9 -> result.append("тысяч ")
                 1 -> result.append("тысяча ")
                 else -> result.append("тысячи ")
             }

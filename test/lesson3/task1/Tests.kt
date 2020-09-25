@@ -106,6 +106,7 @@ class Tests {
     @Test
     @Tag("2")
     fun maxDivisor() {
+        assertEquals(3, maxDivisor(6))
         assertEquals(1, maxDivisor(17))
         assertEquals(12, maxDivisor(24))
         assertEquals(59, maxDivisor(177))

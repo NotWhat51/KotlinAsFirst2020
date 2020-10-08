@@ -5,9 +5,6 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
 import kotlin.math.sqrt
-import lesson4.task1.decimal as decimal1
-import kotlin.collections.listOf as listOf
-import kotlin.collections.mutableListOf as mutableListOf
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -206,17 +203,20 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
+    if (isPrime(n)) return listOf(n)
     val result = mutableListOf<Int>()
-    if (isPrime(n)) result.add(n) else {
-        var i = 2
-        var m = n
-        while (m > 1) {
-            while (m % i == 0) {
-                result.add(i)
-                m /= i
-            }
-            i++
+    var number = n
+    if (number % 2 == 0) {
+        result.add(2)
+        number /= 2
+    }
+    var divisor = 3
+    while (number > 1) {
+        while (number % divisor == 0) {
+            result.add(divisor)
+            number /= divisor
         }
+        divisor += 2
     }
     return result
 }
@@ -238,11 +238,8 @@ fun factorizeToString(n: Int): String = (factorize(n)).joinToString(separator = 
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
+    if (n == 0) return listOf(n)
     val result = mutableListOf<Int>()
-    if (n == 0) {
-        result.add(n)
-        return result
-    }
     var number = n
     while (number > 0) {
         result.add(number % base)
@@ -307,12 +304,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     val digits = mutableListOf<Int>()
-    var digit: Int
     for (i in str.indices) {
-        digit = str[i].toInt()
-        if (digit in 48..58) digits.add(digit - 48) else digits.add(digit - 87)
+        if (str[i] in '0'..'9') digits.add((str[i] - '0')) else digits.add((str[i] - 'a') + 10)
     }
-    return lesson4.task1.decimal(digits.toList(), base)
+    return decimal(digits, base)
 }
 
 
@@ -348,8 +343,22 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
+fun transformation(
+    m: Int, list1: List<String>, list2: List<String>,
+    list3: List<String>, list4: List<String>
+): CharSequence {
+    val result = StringBuilder()
+    result.append(list1[m / 100])
+    if ((m % 100 > 10) && (m % 100 < 20)) {
+        result.append(list2[m % 10])
+    } else {
+        result.append(list3[m % 100 / 10])
+        result.append(list4[m % 10])
+    }
+    return result
+}
+
 fun russian(n: Int): CharSequence {
-    var number = n
     val result = StringBuilder()
     val hundreds = listOf(
         "", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ",
@@ -366,35 +375,18 @@ fun russian(n: Int): CharSequence {
     val units = listOf(
         "", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"
     )
-    val unit2 = listOf(
+    val units2 = listOf(
         "", "одна ", "две ", "три ", "четыре ", "пять ", "шесть ", "семь ", "восемь ", "девять "
     )
-    if (number / 1000 != 0) {
-        result.append(hundreds[number / 100000])
-        number %= 100000
-        if ((number / 1000 > 10) && (number / 1000 < 20)) {
-            result.append(tens2[number % 10000 / 1000])
-            number %= 1000
-            result.append("тысяч ")
-        } else {
-            result.append(tens[number / 10000])
-            number %= 10000
-            result.append(unit2[number / 1000])
-            when (number / 1000) {
-                0, 5, 6, 7, 8, 9 -> result.append("тысяч ")
-                1 -> result.append("тысяча ")
-                else -> result.append("тысячи ")
-            }
-            number %= 1000
+    result.append(transformation(n / 1000, hundreds, tens2, tens, units2))
+    if (n / 1000 != 0) {
+        when (n % 10000 / 1000) {
+            0, 5, 6, 7, 8, 9 -> result.append("тысяч ")
+            1 -> result.append("тысяча ")
+            else -> result.append("тысячи ")
         }
     }
-    result.append(hundreds[number / 100])
-    number %= 100
-    if ((number <= 10) || (number >= 20)) {
-        result.append(tens[number / 10])
-        result.append(units[number % 10])
-    } else {
-        result.append(tens2[number % 10])
-    }
+    result.append(transformation(n % 1000, hundreds, tens2, tens, units))
     return result.toString().trim()
 }
+

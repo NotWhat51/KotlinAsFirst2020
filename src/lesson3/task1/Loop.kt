@@ -91,9 +91,8 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var previous = 0
     var current = 1
-    var newCurrent: Int
     for (i in 2..n) {
-        newCurrent = previous + current
+        val newCurrent = previous + current
         previous = current
         current = newCurrent
     }
@@ -118,8 +117,10 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n / 2 downTo 1) {
-        if (n % i == 0) return i
+    var divisor = 2
+    while (divisor < n / 2) {
+        if (n % divisor == 0) return n / divisor
+        divisor++
     }
     return 1
 }
@@ -229,7 +230,6 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  */
 fun hasDifferentDigits(n: Int): Boolean {
     var number = n / 10
-    var count = 0
     val last = n % 10
     while (number > 0) {
         if (number % 10 != last) return true
@@ -295,7 +295,6 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun squareSequenceDigit(n: Int): Int {
     var sumNumber = 0
-    var difference: Int
     var arg = 1
     var lenght = digitNumber(arg * arg)
     while (sumNumber < n) {
@@ -304,7 +303,7 @@ fun squareSequenceDigit(n: Int): Int {
         lenght = digitNumber(arg * arg)
     }
     var lastNumber = (arg - 1) * (arg - 1)
-    difference = sumNumber - n
+    var difference = sumNumber - n
     while (difference > 0) {
         lastNumber /= 10
         difference--
@@ -323,7 +322,6 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     var sumNumber = 0
-    var difference: Int
     var arg = 1
     var length = digitNumber(fib(arg))
     while (sumNumber < n) {
@@ -332,7 +330,7 @@ fun fibSequenceDigit(n: Int): Int {
         length = digitNumber(fib(arg))
     }
     var lastNumber = fib(arg - 1)
-    difference = sumNumber - n
+    var difference = sumNumber - n
     while (difference > 0) {
         lastNumber /= 10
         difference--

@@ -206,18 +206,15 @@ fun factorize(n: Int): List<Int> {
     if (isPrime(n)) return listOf(n)
     val result = mutableListOf<Int>()
     var number = n
-    if (number % 2 == 0) {
+    while (number % 2 == 0) {
         result.add(2)
         number /= 2
     }
-    var divisor = 3
-    while (number > 1) {
+    for (divisor in 3..n / 2 step 2)
         while (number % divisor == 0) {
             result.add(divisor)
             number /= divisor
         }
-        divisor += 2
-    }
     return result
 }
 
@@ -380,13 +377,17 @@ fun russian(n: Int): CharSequence {
     )
     result.append(transformation(n / 1000, hundreds, tens2, tens, units2))
     if (n / 1000 != 0) {
-        when (n % 10000 / 1000) {
-            0, 5, 6, 7, 8, 9 -> result.append("тысяч ")
-            1 -> result.append("тысяча ")
-            else -> result.append("тысячи ")
+        val end = n / 1000 % 100
+        if ((end > 10) && (end < 20)) {
+            result.append("тысяч ")
+        } else {
+            when (end % 10) {
+                0, 5, 6, 7, 8, 9 -> result.append("тысяч ")
+                1 -> result.append("тысяча ")
+                else -> result.append("тысячи ")
+            }
         }
     }
     result.append(transformation(n % 1000, hundreds, tens2, tens, units))
     return result.toString().trim()
 }
-

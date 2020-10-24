@@ -4,6 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
+import lesson3.task1.maxDivisor
 import kotlin.math.sqrt
 
 // Урок 4: списки
@@ -210,11 +211,14 @@ fun factorize(n: Int): List<Int> {
         result.add(2)
         number /= 2
     }
-    for (divisor in 3..n / 2 step 2)
+    var divisor = 3
+    while (number > 1) {
         while (number % divisor == 0) {
             result.add(divisor)
             number /= divisor
         }
+        divisor += 2
+    }
     return result
 }
 
@@ -378,7 +382,7 @@ fun russian(n: Int): CharSequence {
     result.append(transformation(n / 1000, hundreds, tens2, tens, units2))
     if (n / 1000 != 0) {
         val end = n / 1000 % 100
-        if ((end > 10) && (end < 20)) {
+        if (end in 11..19) {
             result.append("тысяч ")
         } else {
             when (end % 10) {

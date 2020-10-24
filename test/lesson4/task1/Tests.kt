@@ -162,9 +162,11 @@ class Tests {
     @Test
     @Tag("3")
     fun factorize() {
+        assertEquals(listOf(2, 3, 3, 19), factorize(342))
+        assertEquals(listOf(3, 7, 23), factorize(483))
         assertEquals(listOf(2), factorize(2))
         assertEquals(listOf(3, 5, 5), factorize(75))
-        assertEquals(listOf(2, 3, 3, 19), factorize(342))
+        assertEquals(listOf(2, 7, 13, 23), factorize(4186))
     }
 
     @Test

@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.collections.mutableMapOf as mutableMapOf
+
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -100,7 +102,8 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val result = mutableMapOf<Int, MutableList<String>>()
     for ((name, grade) in grades) {
-        if (!result.contains(grade))
+        val content: MutableList<String>? = result[grade]
+        if (content == null)
             result[grade] = mutableListOf(name)
         else
             result[grade]!!.add(name)
@@ -118,7 +121,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean{
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((key, value) in a)
         if (value != b[key]) return false
     return true
@@ -139,12 +142,9 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean{
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    val namesToRemove = mutableListOf<String>()
-    for (aElement in a)
-        for (bElement in b)
-            if (aElement == bElement) namesToRemove.add(bElement.key)
-    for (name in namesToRemove)
-        a.remove(name)
+    for ((key, value) in b) {
+        if (value == a[key]) a.remove(key)
+    }
 }
 
 /**
@@ -154,7 +154,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b.toSet()).toList()
 
 /**
  * Средняя (3 балла)
@@ -173,7 +173,21 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> = TODO()
+fun additiveNumber(map: Map<String, String>, result: MutableMap<String, String>) {
+    for ((name, number) in map)
+        if (!result.contains(name))
+            result[name] = number
+        else
+            if (!result[name]?.contains(number)!!)
+                result[name] += ", $number"
+}
+
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
+    val result = mutableMapOf<String, String>()
+    additiveNumber(mapA, result)
+    additiveNumber(mapB, result)
+    return result
+}
 
 /**
  * Средняя (4 балла)
@@ -185,7 +199,18 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val result = mutableMapOf<String, Double>()
+    val amount = mutableMapOf<String, Int>()
+    for ((name, price) in stockPrices) {
+        if (result[name] == null) result[name] = price else result[name] = result[name]!! + price
+        if (amount[name] == null) amount[name] = 1 else amount[name] = amount[name]!! + 1
+    }
+    for ((name, count) in amount) {
+        result[name] = result[name]!! / count
+    }
+    return result
+}
 
 /**
  * Средняя (4 балла)
@@ -202,7 +227,17 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    var resultName: String? = null
+    var minPrice = Double.MAX_VALUE
+    for ((name, pair) in stuff) {
+        if ((pair.first == kind) && (pair.second < minPrice)) {
+            resultName = name
+            minPrice = pair.second
+        }
+    }
+    return resultName
+}
 
 /**
  * Средняя (3 балла)
@@ -213,7 +248,12 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    for (i in word.toLowerCase()) {
+        if (!chars.contains(i)) return false
+    }
+    return true
+}
 
 /**
  * Средняя (4 балла)
@@ -227,7 +267,13 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    for (element in list) {
+        result[element] = result.getOrDefault(element, 0) + 1
+    }
+    return result.filter { it -> it.value != 1 }
+}
 
 /**
  * Средняя (3 балла)
@@ -241,7 +287,17 @@ fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    val words2 = mutableListOf<Map<Char, Int>>()
+    for (word in words) {
+        val word2 = mutableMapOf<Char, Int>()
+        for (char in word) {
+            word2[char] = word2.getOrDefault(char, 0) + 1
+        }
+        if (words2.contains(word2)) return true
+    }
+    return false
+}
 
 /**
  * Сложная (5 баллов)

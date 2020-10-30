@@ -4,7 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
-import lesson3.task1.maxDivisor
+import lesson3.task1.minDivisor
 import kotlin.math.sqrt
 
 // Урок 4: списки
@@ -211,13 +211,9 @@ fun factorize(n: Int): List<Int> {
         result.add(2)
         number /= 2
     }
-    var divisor = 3
     while (number > 1) {
-        while (number % divisor == 0) {
-            result.add(divisor)
-            number /= divisor
-        }
-        divisor += 2
+        result.add(minDivisor(number))
+        number /= minDivisor(number)
     }
     return result
 }

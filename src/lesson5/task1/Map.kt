@@ -2,9 +2,6 @@
 
 package lesson5.task1
 
-import kotlin.collections.mutableMapOf as mutableMapOf
-
-
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -338,7 +335,24 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+
+//решение ещё не доведено до конца, поэтому тесты на Kotoed будут падать
+
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val result = mutableMapOf<String, MutableSet<String>>()
+    val allFriends = mutableSetOf<String>()
+    for ((name, friend) in friends) {
+        allFriends.add(name)
+        allFriends.addAll(friend)
+    }
+    for (name in allFriends)
+        result[name] = mutableSetOf()
+    for ((name, friend) in friends) {
+        result[name]!!.addAll(friend)
+
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)

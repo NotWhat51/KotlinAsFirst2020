@@ -203,6 +203,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
+
 fun factorize(n: Int): List<Int> {
     if (isPrime(n)) return listOf(n)
     val result = mutableListOf<Int>()
@@ -211,10 +212,13 @@ fun factorize(n: Int): List<Int> {
         result.add(2)
         number /= 2
     }
-    while (number > 1) {
-        result.add(minDivisor(number))
-        number /= minDivisor(number)
+    for (divisor in 3..sqrt(n.toDouble()).toInt() step 2) {
+        while (number % divisor == 0) {
+            result.add(divisor)
+            number /= divisor
+        }
     }
+    if ((n % number == 0) && (number != 1)) result.add(number)
     return result
 }
 

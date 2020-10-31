@@ -174,11 +174,10 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun addInResult(map: Map<String, String>, res: MutableMap<String, MutableSet<String>>) {
-    for ((key, value) in map)
-        if (res[key] == null)
-            res[key] = mutableSetOf(value)
-        else
-            res[key]!!.add(value)
+    for ((key, value) in map) {
+        res[key] = res.getOrPut(key) { mutableSetOf(value) }
+        res[key]!!.add(value)
+    }
 }
 
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
@@ -254,7 +253,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val lowChars = mutableListOf<Char>()
     for (char in chars)
         lowChars.add(char.toLowerCase())
-    word.toSet()
+    lowChars.toSet()
     for (i in word.toLowerCase())
         if (!lowChars.contains(i))
             return false
@@ -278,7 +277,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
     for (element in list) {
         result[element] = result.getOrDefault(element, 0) + 1
     }
-    return result.filterValues { it -> it != 1 }
+    return result.filterValues { it != 1 }
 }
 
 /**
@@ -300,8 +299,7 @@ fun hasAnagrams(words: List<String>): Boolean {
         for (char in word) {
             word2[char] = word2.getOrDefault(char, 0) + 1
         }
-        if (words2.contains(word2)) return true
-        words2.add(word2)
+        if (!words2.add(word2)) return true
     }
     return false
 }

@@ -338,6 +338,9 @@ fun hasAnagrams(words: List<String>): Boolean {
 
 //решение ещё не доведено до конца, поэтому тесты на Kotoed будут падать
 
+// доделать добавление друзей друзей
+//скорее всего необходимо вынести добавление в отдельную функцию и сделать рекурсию
+
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, MutableSet<String>>()
     val allFriends = mutableSetOf<String>()
@@ -371,7 +374,15 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+//упушен момент, когда занчения совпадают, а индексы разные, но в сумме эти значения дают
+//необходимый ответ, поэтому надо доработать
+
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (n in list)
+        if (list.contains(number - n) && list.indexOf(n) != list.indexOf(number - n))
+            return Pair(list.indexOf(n), list.indexOf(number - n))
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -394,4 +405,18 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val value = mutableMapOf<Double, Pair<String, Int>>()
+    val result = mutableSetOf<String>()
+    var capacity2 = capacity
+    for ((name, pair) in treasures)
+        value[pair.second * 1.0 / pair.first] = Pair(name, pair.first)
+    value.toSortedMap(Comparator.reverseOrder())
+    for ((first, second) in value.values) {
+        if (second <= capacity2) {
+            capacity2 -= second
+            result.add(first)
+        }
+    }
+    return result
+}

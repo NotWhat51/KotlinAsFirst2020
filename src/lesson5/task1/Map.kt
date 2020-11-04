@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import ru.spbstu.wheels.sorted
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -170,22 +172,11 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b
  *     mapOf("Emergency" to "911", "Police" to "02")
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
-fun addInResult(map: Map<String, String>, res: MutableMap<String, MutableSet<String>>) {
-    for ((key, value) in map) {
-        res[key] = res.getOrPut(key) { mutableSetOf(value) }
-        res[key]!!.add(value)
-    }
-}
 
-fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val resultInSet = mutableMapOf<String, MutableSet<String>>()
-    val resultInString = mutableMapOf<String, String>()
-    addInResult(mapA, resultInSet)
-    addInResult(mapB, resultInSet)
-    for ((name, number) in resultInSet)
-        resultInString[name] = number.joinToString()
-    return resultInString
-}
+fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> =
+    (mapA.keys + mapB.keys).associateWith {
+        (setOf(mapA[it], mapB[it])).filterNotNull().joinToString(", ")
+    }
 
 /**
  * Средняя (4 балла)
@@ -247,10 +238,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val lowChars = mutableListOf<Char>()
+    val lowChars = mutableSetOf<Char>()
     for (char in chars)
         lowChars.add(char.toLowerCase())
-    lowChars.toSet()
     for (i in word.toLowerCase())
         if (!lowChars.contains(i))
             return false
@@ -335,12 +325,6 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "GoodGnome" to setOf()
  *        )
  */
-
-//решение ещё не доведено до конца, поэтому тесты на Kotoed будут падать
-
-// доделать добавление друзей друзей
-//скорее всего необходимо вынести добавление в отдельную функцию и сделать рекурсию
-
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, MutableSet<String>>()
     val allFriends = mutableSetOf<String>()
@@ -351,8 +335,13 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     for (name in allFriends)
         result[name] = mutableSetOf()
     for ((name, friend) in friends) {
-        result[name]!!.addAll(friend)
-
+        val res = result[name]!!
+        res.addAll(friend)
+        for (f in friend) {
+            val commutation = friends.getOrDefault(f, setOf())
+            for (element in commutation)
+                if (element != name) res.add(element)
+        }
     }
     return result
 }
@@ -374,13 +363,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-//упушен момент, когда занчения совпадают, а индексы разные, но в сумме эти значения дают
-//необходимый ответ, поэтому надо доработать
+
 
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (n in list)
-        if (list.contains(number - n) && list.indexOf(n) != list.indexOf(number - n))
-            return Pair(list.indexOf(n), list.indexOf(number - n))
+    for ((index, n) in list.withIndex()) {
+        val n2 = number - n
+        val inx = list.indexOf(n2)
+        if ((inx > -1) && (index != inx)) return Pair(index, inx).sorted()
+    }
     return Pair(-1, -1)
 }
 

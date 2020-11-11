@@ -76,7 +76,26 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun checkOnNumber(str: String): Boolean {
+    for (c in str)
+        if (!c.isDigit()) return false
+    return str.isNotEmpty()
+}
+
+fun dateStrToDigit(str: String): String {
+    val months = mapOf(
+        "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4,
+        "мая" to 5, "июня" to 6, "июля" to 7, "августа" to 8,
+        "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
+    )
+    val parts = str.split(" ")
+    if (parts.size != 3 || !checkOnNumber(parts[0]) || !checkOnNumber(parts[2])) return ""
+    val day = parts[0].toInt()
+    val month = months.getOrDefault(parts[1], -1)
+    val year = parts[2].toInt()
+    if (month == -1 || daysInMonth(month, year) < day) return ""
+    return String.format("%02d.%02d.%d", day, month, year)
+}
 
 /**
  * Средняя (4 балла)
@@ -88,7 +107,20 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val months = mapOf(
+        1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля",
+        5 to "мая", 6 to "июня", 7 to "июля", 8 to "августа",
+        9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря"
+    )
+    val parts = digital.split(".")
+    if (parts.size != 3 || !checkOnNumber(parts[0]) || !checkOnNumber(parts[2])) return ""
+    val day = parts[0].toInt()
+    val month = parts[1].toInt()
+    val year = parts[2].toInt()
+    if (month !in 1..12 || daysInMonth(month, year) < day) return ""
+    return String.format("%d %s %d", day, months[month], year)
+}
 
 /**
  * Средняя (4 балла)

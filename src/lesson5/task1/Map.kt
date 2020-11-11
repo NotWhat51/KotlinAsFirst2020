@@ -2,7 +2,7 @@
 
 package lesson5.task1
 
-import ru.spbstu.wheels.sorted
+import java.lang.Integer.max
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -328,20 +328,22 @@ fun hasAnagrams(words: List<String>): Boolean {
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, MutableSet<String>>()
     val allFriends = mutableSetOf<String>()
-    for ((name, friend) in friends) {
-        allFriends.add(name)
-        allFriends.addAll(friend)
-    }
-    for (name in allFriends)
-        result[name] = mutableSetOf()
-    for ((name, friend) in friends) {
-        val res = result[name]!!
-        res.addAll(friend)
-        for (f in friend) {
-            val commutation = friends.getOrDefault(f, setOf())
-            for (element in commutation)
-                if (element != name) res.add(element)
+    allFriends.addAll(friends.keys)
+    for (f in friends.values) allFriends.addAll(f)
+
+    fun addFriends(first: String, stop: String, value: MutableSet<String>): MutableSet<String> {
+        val map = friends.getOrDefault(first, mutableSetOf())
+        for (f in map) {
+            if (value.contains(f) || f == stop) continue
+            value.add(f)
+            value.addAll(addFriends(f, f, value))
         }
+        return value
+    }
+
+    for (f in allFriends) {
+        result[f] = addFriends(f, f, mutableSetOf())
+        result[f]!!.remove(f)
     }
     return result
 }
@@ -366,10 +368,19 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
 
 
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for ((index, n) in list.withIndex()) {
-        val n2 = number - n
-        val inx = list.indexOf(n2)
-        if ((inx > -1) && (index != inx)) return Pair(index, inx).sorted()
+    val sortList = list.sorted()
+    val indexes = mutableMapOf<Int, List<Int>>()
+    for (i in sortList.indices) {
+        val key = sortList[i]
+        indexes[key] = indexes.getOrDefault(key, mutableListOf()) + i
+    }
+    for (i in sortList.indices) {
+        val key = sortList[i]
+        if (key > number * 1.0 / 2) return Pair(-1, -1)
+        val n = number - key
+        val index1 = indexes[key] ?: continue
+        val index2 = indexes[n] ?: continue
+        if (index1.size > 1 || index1 != index2) return Pair(index1.first(), index2.last())
     }
     return Pair(-1, -1)
 }
@@ -396,17 +407,32 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val value = mutableMapOf<Double, Pair<String, Int>>()
     val result = mutableSetOf<String>()
-    var capacity2 = capacity
-    for ((name, pair) in treasures)
-        value[pair.second * 1.0 / pair.first] = Pair(name, pair.first)
-    value.toSortedMap(Comparator.reverseOrder())
-    for ((first, second) in value.values) {
-        if (second <= capacity2) {
-            capacity2 -= second
-            result.add(first)
+    val n = treasures.size
+    val table = Array(n + 1) { Array(capacity + 1) { 0 } }
+    val name = mutableListOf<String>()
+    name.addAll(treasures.keys)
+    val weightPrice = mutableListOf<Pair<Int, Int>>()
+    weightPrice.addAll(treasures.values)
+    for (i in 1..n)
+        for (j in 1..capacity) {
+            if (j >= weightPrice[i - 1].first)
+                table[i][j] =
+                    max(table[i - 1][j], table[i - 1][j - weightPrice[i - 1].first] + weightPrice[i - 1].second)
+            else
+                table[i][j] = table[i - 1][j]
+        }
+
+    fun addInResult(k: Int, w: Int) {
+        if (table[k][w] == 0) return
+        if (table[k][w] == table[k - 1][w])
+            addInResult(k - 1, w)
+        else {
+            addInResult(k - 1, w - weightPrice[k - 1].first)
+            result.add(name[k - 1])
         }
     }
+
+    addInResult(n, capacity)
     return result
 }

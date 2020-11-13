@@ -46,6 +46,7 @@ class Tests {
     @Test
     @Tag("4")
     fun dateDigitToStr() {
+        assertEquals("", dateDigitToStr(""))
         assertEquals("15 июля 2016", dateDigitToStr("15.07.2016"))
         assertEquals("", dateDigitToStr("01.02.20.19"))
         assertEquals("", dateDigitToStr("28.00.2000"))
@@ -122,6 +123,7 @@ class Tests {
     @Test
     @Tag("6")
     fun fromRoman() {
+        assertEquals(3445, fromRoman("MMMCDXLV"))
         assertEquals(1978, fromRoman("MCMLXXVIII"))
         assertEquals(1, fromRoman("I"))
         assertEquals(3000, fromRoman("MMM"))

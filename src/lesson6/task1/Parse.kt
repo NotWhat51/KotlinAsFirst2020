@@ -78,6 +78,7 @@ fun main() {
  */
 
 fun dateStrToDigit(str: String): String {
+    if (str.isEmpty()) return ""
     val months = mapOf(
         "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
         "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
@@ -103,15 +104,17 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
+    if (digital.isEmpty()) return ""
     val months = listOf(
         "января", "февраля", "марта", "апреля", "мая", "июня",
         "июля", "августа", "сентября", "октября", "ноября", "декабря"
     )
     val parts = digital.split(".")
+    if (parts.size != 3) return ""
     val day = parts[0].toIntOrNull()
     val month = parts[1].toIntOrNull() ?: 0
     val year = parts[2].toIntOrNull()
-    if (parts.size != 3 || day == null || year == null) return ""
+    if (day == null || year == null) return ""
     if (month !in 1..12 || daysInMonth(month, year) < day) return ""
     return String.format("%d %s %d", day, months[month - 1], year)
 }
@@ -172,14 +175,14 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val regex = Regex("""[%\+\-]*""")
+    val regex = Regex("""[%\+\-]+""")
     var max = -1
     val effect = jumps.split(" ")
     for (i in effect.indices step 2) {
         val high = effect[i].toIntOrNull() ?: return -1
         val res = effect[i + 1]
         if (!regex.matches(res)) return -1
-        if ('+' in effect[i + 1] && high > max) max = high
+        if ('+' in res && high > max) max = high
     }
     return max
 }
@@ -195,18 +198,15 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val regex = Regex("""\d+(\s[+\-]\s\d+)*""")
-    if (expression.matches((regex))) {
-        if (expression.length == 1) return expression.toInt()
-        val parts = expression.split(" ")
-        var sum = parts[0].toInt()
-        for (i in 1 until parts.size step 2) {
-            val sign = parts[i]
-            val n = parts[i + 1].toInt()
-            sum += if (sign == "+") n else -1 * n
-        }
-        return sum
-    } else
-        throw IllegalArgumentException()
+    if (!expression.matches((regex))) throw IllegalArgumentException()
+    val parts = expression.split(" ")
+    var sum = parts[0].toInt()
+    for (i in 1 until parts.size step 2) {
+        val sign = parts[i]
+        val n = parts[i + 1].toInt()
+        sum += if (sign == "+") n else -n
+    }
+    return sum
 }
 
 /**
@@ -241,23 +241,21 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     val regex = Regex("""([^\s]+\s\d+(\.\d+)?;\s)*[^\s]+\s\d+(\.\d+)?${'$'}""")
-    if (description.matches(regex)) {
-        val pairs = description.split("; ")
-        val pairs2 = mutableMapOf<String, Double>()
-        for (i in pairs) {
-            val pair = i.split(" ")
-            pairs2[pair[0]] = pair[1].toDouble()
+    if (!description.matches(regex)) return ""
+    val pairs = description.split("; ")
+    val pairs2 = mutableListOf<Pair<String, Double>>()
+    for (i in pairs) {
+        val pair = i.split(" ")
+        pairs2.add(pair[0] to pair[1].toDouble())
+    }
+    var maxPrice = -1.0
+    var maxName = ""
+    for ((name, price) in pairs2)
+        if (price > maxPrice) {
+            maxPrice = price
+            maxName = name
         }
-        var maxPrice = -1.0
-        var maxName = ""
-        for ((name, price) in pairs2)
-            if (price > maxPrice) {
-                maxPrice = price
-                maxName = name
-            }
-        return maxName
-    } else
-        return ""
+    return maxName
 }
 
 /**
@@ -271,6 +269,7 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
+
 fun fromRoman(roman: String): Int {
     val regex = Regex("""^M{0,3}(CM)?D{0,3}(CD)?C{0,3}(XC)?L{0,3}(XL)?X{0,3}(IX)?V{0,3}(IV)?I{0,3}${'$'}""")
     if (roman.isEmpty() || !roman.matches(regex)) return -1

@@ -197,7 +197,21 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val regex = Regex("""\d+(\s[+\-]\s\d+)*""")
+    if (expression.matches((regex))) {
+        if (checkOnNumber(expression)) return expression.toInt()
+        val parts = expression.split(" ")
+        var sum = parts[0].toInt()
+        for (i in 1 until parts.size step 2) {
+            val sign = parts[i]
+            val n = parts[i + 1].toInt()
+            sum += if (sign == "+") n else -1 * n
+        }
+        return sum
+    } else
+        throw IllegalArgumentException()
+}
 
 /**
  * Сложная (6 баллов)
@@ -208,7 +222,15 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.toLowerCase().split(" ")
+    var index = 0
+    for (i in 0 until words.size - 1) {
+        if (words[i] == words[i + 1]) return index
+        index += words[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -221,8 +243,26 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
-
+fun mostExpensive(description: String): String {
+    val regex = Regex("""([^\s]+\s\d+(\.\d+)?;\s)*[^\s]+\s\d+(\.\d+)?${'$'}""")
+    if (description.matches(regex)) {
+        val pairs = description.split("; ")
+        val pairs2 = mutableMapOf<String, Double>()
+        for (i in pairs) {
+            val pair = i.split(" ")
+            pairs2[pair[0]] = pair[1].toDouble()
+        }
+        var maxPrice = -1.0
+        var maxName = ""
+        for ((name, price) in pairs2)
+            if (price > maxPrice) {
+                maxPrice = price
+                maxName = name
+            }
+        return maxName
+    } else
+        return ""
+}
 /**
  * Сложная (6 баллов)
  *

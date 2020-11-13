@@ -78,7 +78,6 @@ fun main() {
  */
 
 fun dateStrToDigit(str: String): String {
-    if (str.isEmpty()) return ""
     val months = mapOf(
         "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
         "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
@@ -104,7 +103,6 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (digital.isEmpty()) return ""
     val months = listOf(
         "января", "февраля", "марта", "апреля", "мая", "июня",
         "июля", "августа", "сентября", "октября", "ноября", "декабря"
@@ -272,25 +270,22 @@ fun mostExpensive(description: String): String {
 
 fun fromRoman(roman: String): Int {
     val regex = Regex("""^M{0,3}(CM)?D{0,3}(CD)?C{0,3}(XC)?L{0,3}(XL)?X{0,3}(IX)?V{0,3}(IV)?I{0,3}${'$'}""")
-    if (roman.isEmpty() || !roman.matches(regex)) return -1
+    if (!roman.matches(regex)) return -1
     var result = 0
     val digits = mapOf(
         'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000
     )
     if (roman.length == 1) return digits[roman[0]] ?: -1
-    var i = 1
-    while (i < roman.length) {
-        val first = digits[roman[i - 1]] ?: 0
-        val second = digits[roman[i]] ?: 0
+    var mockLast = 0
+    for (i in 0 until roman.length - 1) {
+        val first = digits[roman[i]] ?: 0
+        val second = digits[roman[i + 1]] ?: 0
         if (first < second) {
-            result = result - first + second
-            i += 2
-        } else {
+            result -= first
+        } else
             result += first
-            i++
-            if (i == roman.length) result += digits[roman.last()] ?: 0
-        }
     }
+    result += digits[roman.last()] ?: 0
     return result
 }
 

@@ -278,15 +278,20 @@ fun fromRoman(roman: String): Int {
     val digits = mapOf(
         'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000
     )
-    for (i in 1 until roman.length) {
+    if (roman.length == 1) return digits[roman[0]] ?: -1
+    var i = 1
+    while (i < roman.length) {
         val first = digits[roman[i - 1]] ?: 0
         val second = digits[roman[i]] ?: 0
-        if (first < second)
+        if (first < second) {
             result = result - first + second
-        else
+            i += 2
+        } else {
             result += first
+            i++
+            if (i == roman.length) result += digits[roman.last()] ?: 0
+        }
     }
-    result += digits[roman.last()] ?: 0
     return result
 }
 

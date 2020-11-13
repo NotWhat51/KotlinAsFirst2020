@@ -76,10 +76,6 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun checkOnNumber(str: String): Boolean {
-    if (str.toIntOrNull() == null) return false
-    return str.isNotEmpty()
-}
 
 val months = listOf(
     "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -88,10 +84,11 @@ val months = listOf(
 
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
-    if (parts.size != 3 || !checkOnNumber(parts[0]) || !checkOnNumber(parts[2])) return ""
-    val day = parts[0].toInt()
+    if (parts.size != 3) return ""
+    val day = parts[0].toIntOrNull()
+    val year = parts[2].toIntOrNull()
+    if (day == null || year == null) return ""
     val month = if (months.contains(parts[1])) months.indexOf(parts[1]) + 1 else -1
-    val year = parts[2].toInt()
     if (month == -1 || daysInMonth(month, year) < day) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
@@ -108,10 +105,10 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
-    if (parts.size != 3 || !checkOnNumber(parts[0]) || !checkOnNumber(parts[2])) return ""
-    val day = parts[0].toInt()
-    val month = parts[1].toInt()
-    val year = parts[2].toInt()
+    val day = parts[0].toIntOrNull()
+    val month = parts[1].toIntOrNull() ?: 0
+    val year = parts[2].toIntOrNull()
+    if (parts.size != 3 || day == null || year == null) return ""
     if (month !in 1..12 || daysInMonth(month, year) < day) return ""
     return String.format("%d %s %d", day, months[month - 1], year)
 }
@@ -156,8 +153,7 @@ fun bestLongJump(jumps: String): Int {
     val effect = jumps.split(" ")
     for (n in effect) {
         if (n == "-" || n == "%") continue
-        if (!checkOnNumber(n)) return -1
-        val n2 = n.toInt()
+        val n2 = n.toIntOrNull() ?: return -1
         if (n2 > max) max = n2
     }
     return max
@@ -178,12 +174,10 @@ fun bestHighJump(jumps: String): Int {
     var max = -1
     val effect = jumps.split(" ")
     for (i in effect.indices step 2) {
-        val high = effect[i]
-        if (!checkOnNumber(high)) return -1
+        val high = effect[i].toIntOrNull() ?: return -1
         val res = effect[i + 1]
         if ("%" !in res && "-" !in res && "+" !in res) return -1
-        val n2 = high.toInt()
-        if ('+' in effect[i + 1]) max = n2
+        if ('+' in effect[i + 1]) max = high
     }
     return max
 }
@@ -200,7 +194,7 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val regex = Regex("""\d+(\s[+\-]\s\d+)*""")
     if (expression.matches((regex))) {
-        if (checkOnNumber(expression)) return expression.toInt()
+        if (expression.length == 1) return expression.toInt()
         val parts = expression.split(" ")
         var sum = parts[0].toInt()
         for (i in 1 until parts.size step 2) {
@@ -263,6 +257,7 @@ fun mostExpensive(description: String): String {
     } else
         return ""
 }
+
 /**
  * Сложная (6 баллов)
  *
@@ -274,7 +269,24 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val regex = Regex("""^M{0,3}(CM)?D{0,3}(CD)?C{0,3}(XC)?L{0,3}(XL)?X{0,3}(IX)?V{0,3}(IV)?I{0,3}${'$'}""")
+    if (roman.isEmpty() || !roman.matches(regex)) return -1
+    var result = 0
+    val digits = mapOf(
+        'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000
+    )
+    for (i in 1 until roman.length) {
+        val first = digits[roman[i - 1]] ?: 0
+        val second = digits[roman[i]] ?: 0
+        if (first < second)
+            result = result - first + second
+        else
+            result += first
+    }
+    result += digits[roman.last()] ?: 0
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)

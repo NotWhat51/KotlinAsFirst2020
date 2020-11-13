@@ -331,19 +331,19 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     allFriends.addAll(friends.keys)
     for (f in friends.values) allFriends.addAll(f)
 
-    fun addFriends(first: String, stop: String, value: MutableSet<String>): MutableSet<String> {
-        val map = friends.getOrDefault(first, mutableSetOf())
-        for (f in map) {
-            if (value.contains(f) || f == stop) continue
+    fun addFriends(name: String, value: MutableSet<String>): MutableSet<String> {
+        for (f in friends.getOrDefault(name, emptySet())) {
+            if (value.contains(f) || f == name) continue
             value.add(f)
-            value.addAll(addFriends(f, f, value))
+            addFriends(f, value)
         }
         return value
     }
 
     for (f in allFriends) {
-        result[f] = addFriends(f, f, mutableSetOf())
-        result[f]!!.remove(f)
+        val value = addFriends(f, mutableSetOf())
+        value.remove(f)
+        result[f] = value
     }
     return result
 }
@@ -372,10 +372,11 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val list2 = list.withIndex()
     for ((i, n) in list2) {
         val n2 = number - n
-        if (map[n2] != null)
-            return Pair(map[n2]!!, i)
+        val ind = map[n2]
+        if (ind != null)
+            return Pair(ind, i)
         else
-            if (map[n] == null)
+            if (n !in map)
                 map[n] = i
     }
     return Pair(-1, -1)
@@ -406,15 +407,14 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val result = mutableSetOf<String>()
     val n = treasures.size
     val table = Array(n + 1) { Array(capacity + 1) { 0 } }
-    val name = mutableListOf<String>()
-    name.addAll(treasures.keys)
-    val weightPrice = mutableListOf<Pair<Int, Int>>()
-    weightPrice.addAll(treasures.values)
+    val name = treasures.keys.toList()
+    val weightPrice = treasures.values.toList()
     for (i in 1..n)
         for (j in 1..capacity) {
-            if (j >= weightPrice[i - 1].first)
+            val weight = weightPrice[i - 1].first
+            if (j >= weight)
                 table[i][j] =
-                    max(table[i - 1][j], table[i - 1][j - weightPrice[i - 1].first] + weightPrice[i - 1].second)
+                    max(table[i - 1][j], table[i - 1][j - weight] + weightPrice[i - 1].second)
             else
                 table[i][j] = table[i - 1][j]
         }

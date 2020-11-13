@@ -77,18 +77,17 @@ fun main() {
  * входными данными.
  */
 
-val months = listOf(
-    "января", "февраля", "марта", "апреля", "мая", "июня",
-    "июля", "августа", "сентября", "октября", "ноября", "декабря"
-)
-
 fun dateStrToDigit(str: String): String {
+    val months = mapOf(
+        "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
+        "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
+    )
     val parts = str.split(" ")
     if (parts.size != 3) return ""
     val day = parts[0].toIntOrNull()
     val year = parts[2].toIntOrNull()
     if (day == null || year == null) return ""
-    val month = if (months.contains(parts[1])) months.indexOf(parts[1]) + 1 else -1
+    val month = months.getOrDefault(parts[1], -1)
     if (month == -1 || daysInMonth(month, year) < day) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
@@ -104,6 +103,10 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
+    val months = listOf(
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    )
     val parts = digital.split(".")
     val day = parts[0].toIntOrNull()
     val month = parts[1].toIntOrNull() ?: 0
@@ -169,13 +172,14 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
+    val regex = Regex("""[%\+\-]*""")
     var max = -1
     val effect = jumps.split(" ")
     for (i in effect.indices step 2) {
         val high = effect[i].toIntOrNull() ?: return -1
         val res = effect[i + 1]
-        if ("%" !in res && "-" !in res && "+" !in res) return -1
-        if ('+' in effect[i + 1]) max = high
+        if (!regex.matches(res)) return -1
+        if ('+' in effect[i + 1] && high > max) max = high
     }
     return max
 }

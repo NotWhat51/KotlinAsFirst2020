@@ -270,7 +270,7 @@ fun mostExpensive(description: String): String {
 
 fun fromRoman(roman: String): Int {
     val regex = Regex("""^M{0,3}(CM)?D{0,3}(CD)?C{0,3}(XC)?L{0,3}(XL)?X{0,3}(IX)?V{0,3}(IV)?I{0,3}${'$'}""")
-    if (!roman.matches(regex)) return -1
+    if (roman.isEmpty() || !roman.matches(regex)) return -1
     var result = 0
     val digits = mapOf(
         'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000

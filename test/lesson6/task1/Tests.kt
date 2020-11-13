@@ -123,6 +123,7 @@ class Tests {
     @Test
     @Tag("6")
     fun fromRoman() {
+        assertEquals(-1, fromRoman(""))
         assertEquals(3445, fromRoman("MMMCDXLV"))
         assertEquals(1978, fromRoman("MCMLXXVIII"))
         assertEquals(1, fromRoman("I"))

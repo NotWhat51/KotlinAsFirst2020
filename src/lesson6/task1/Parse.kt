@@ -173,7 +173,7 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val regex = Regex("""[%\+\-]+""")
+    val regex = Regex("""[%+\-]+""")
     var max = -1
     val effect = jumps.split(" ")
     for (i in effect.indices step 2) {
@@ -275,17 +275,15 @@ fun fromRoman(roman: String): Int {
     val digits = mapOf(
         'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000
     )
-    if (roman.length == 1) return digits[roman[0]] ?: -1
-    var mockLast = 0
     for (i in 0 until roman.length - 1) {
-        val first = digits[roman[i]] ?: 0
-        val second = digits[roman[i + 1]] ?: 0
+        val first = digits.getValue(roman[i])
+        val second = digits.getValue(roman[i + 1])
         if (first < second) {
             result -= first
         } else
             result += first
     }
-    result += digits[roman.last()] ?: 0
+    result += digits.getValue(roman.last())
     return result
 }
 

@@ -324,8 +324,6 @@ fun fromRoman(roman: String): Int {
  *
  */
 
-//плохо проработано восприятие границ цикла, доработать
-
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val regex = Regex("""^[> <+\-\[\]]+$""")
     if (!regex.matches(commands)) throw IllegalArgumentException()
@@ -340,7 +338,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         var i = commandIndex - 1
         var count = 0
         while (i >= 0) {
-            when(commands[i]) {
+            when (commands[i]) {
                 ']' -> count++
                 '[' -> if (count > 0) count-- else return i
             }

@@ -323,4 +323,56 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+
+//плохо проработано восприятие границ цикла, доработать
+
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val regex = Regex("""^[> <+\-\[\]]+$""")
+    if (!regex.matches(commands)) throw IllegalArgumentException()
+    if (Regex("""\[""").findAll(commands).toList().size != Regex("""]""").findAll(commands).toList().size)
+        throw IllegalArgumentException()
+    val tape = MutableList(cells) { 0 }
+    var cellIndex = cells / 2
+    var commandIndex = 0
+    var done = 0
+
+    fun begin(): Int {
+        var i = commandIndex - 1
+        var count = 0
+        while (i >= 0) {
+            when(commands[i]) {
+                ']' -> count++
+                '[' -> if (count > 0) count-- else return i
+            }
+            i--
+        }
+        return commands.length / 2
+    }
+
+    fun end(): Int {
+        var i = commandIndex + 1
+        var count = 0
+        while (i < commands.length) {
+            when (commands[i]) {
+                '[' -> count++
+                ']' -> if (count > 0) count-- else return i
+            }
+            i++
+        }
+        return 0
+    }
+
+    while (commandIndex < commands.length && done < limit) {
+        when (commands[commandIndex]) {
+            '>' -> if (cellIndex < cells - 1) cellIndex++ else throw IllegalStateException()
+            '<' -> if (cellIndex > 0) cellIndex-- else throw IllegalStateException()
+            '+' -> tape[cellIndex]++
+            '-' -> tape[cellIndex]--
+            '[' -> if (tape[cellIndex] == 0) commandIndex = end()
+            ']' -> if (tape[cellIndex] != 0) commandIndex = begin()
+        }
+        commandIndex++
+        done++
+    }
+    return tape
+}

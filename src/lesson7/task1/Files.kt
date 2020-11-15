@@ -126,7 +126,21 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  * Исключения (жюри, брошюра, парашют) в рамках данного задания обрабатывать не нужно
  *
  */
-fun sibilants(inputName: String, outputName: String) = TODO()
+fun sibilants(inputName: String, outputName: String) {
+    val input = File(inputName).bufferedReader()
+    val output = File(outputName).bufferedWriter()
+    val threat = setOf('Ж', 'ж', 'Ч', 'ч', 'Ш', 'ш', 'Щ', 'щ')
+    val swap = mapOf('Ы' to 'И', 'ы' to 'и', 'Я' to 'А', 'я' to 'а', 'Ю' to 'У', 'ю' to 'у')
+    input.forEachLine {
+        val line = StringBuilder(it)
+        for (i in 0 until line.length - 1)
+            if (line[i] in threat && line[i + 1] in swap) line[i + 1] = swap.getValue(line[i + 1])
+        output.write(line.toString())
+        output.newLine()
+    }
+    input.close()
+    output.close()
+}
 
 /**
  * Средняя (15 баллов)
@@ -146,16 +160,7 @@ fun sibilants(inputName: String, outputName: String) = TODO()
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    val input = File(inputName).bufferedReader()
-    val output = File(outputName).bufferedWriter()
-    val text = input.readLines().toMutableList()
-    val max = (text.maxOrNull() ?: "").length
-    input.forEachLine {
-        output.write(" ".repeat((max - it.trim().length) / 2) + it.trim())
-        output.newLine()
-    }
-    input.close()
-    output.close()
+    TODO()
 }
 
 /**

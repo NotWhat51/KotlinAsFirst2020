@@ -63,7 +63,19 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val input = File(inputName).bufferedReader()
+    val output = File(outputName).bufferedWriter()
+    input.forEachLine {
+        if (it.isNotEmpty()) {
+            if (it[0] != '_') {
+                output.write(it)
+                output.newLine()
+            }
+        } else
+            output.newLine()
+    }
+    input.close()
+    output.close()
 }
 
 /**
@@ -75,7 +87,29 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    val input = File(inputName).bufferedReader()
+
+    fun add(str: String, substr: String): Int {
+        val str2 = str.toLowerCase()
+        val substr2 = substr.toLowerCase()
+        var i = str2.indexOf(substr2)
+        var count = 0
+        while (i != -1) {
+            count++
+            i = str2.indexOf(substr2, i + 1)
+        }
+        return count
+    }
+
+    input.forEachLine {
+        for (str in substrings)
+            result[str] = result.getOrDefault(str, 0) + add(it, str)
+    }
+    input.close()
+    return result
+}
 
 
 /**
@@ -92,7 +126,19 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val input = File(inputName).bufferedReader()
+    val output = File(outputName).bufferedWriter()
+    val threat = setOf('Ж', 'ж', 'Ч', 'ч', 'Ш', 'ш', 'Щ', 'щ')
+    val swap = mapOf('Ы' to 'И', 'ы' to 'и', 'Я' to 'А', 'я' to 'а', 'Ю' to 'У', 'ю' to 'у')
+    input.forEachLine {
+        val line = StringBuilder(it)
+        for (i in 0 until line.length - 1)
+            if (line[i] in threat && line[i + 1] in swap) line[i + 1] = swap.getValue(line[i + 1])
+        output.write(line.toString())
+        output.newLine()
+    }
+    input.close()
+    output.close()
 }
 
 /**

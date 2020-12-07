@@ -4,6 +4,7 @@ package lesson7.task1
 
 import java.io.File
 import java.lang.Integer.max
+import java.util.Stack
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -167,12 +168,11 @@ fun centerFile(inputName: String, outputName: String) {
     input.forEachLine {
         text.add(it.trim())
     }
-    val max = (text.maxOrNull() ?: "").length
+    val max = (text.maxByOrNull { it } ?: "").length
     for (line in text) {
         output.write(" ".repeat((max - line.length) / 2) + line)
         output.newLine()
     }
-    input.close()
     output.close()
 }
 
@@ -346,8 +346,31 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  *
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
+
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    fun differentLetters(str: String): Boolean {
+        val set = str.toLowerCase().toSet()
+        return str.length == set.size
+    }
+
+    val input = File(inputName).bufferedReader()
+    val output = File(outputName).bufferedWriter()
+    val result = mutableListOf<String>()
+    var max = -1
+    input.forEachLine {
+        if (differentLetters(it)) {
+            val l = it.length
+            if (l >= max) {
+                if (l > max) {
+                    result.clear()
+                    max = l
+                }
+                result.add(it)
+            }
+        }
+    }
+    output.write(result.joinToString(", "))
+    output.close()
 }
 
 /**

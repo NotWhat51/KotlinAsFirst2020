@@ -118,7 +118,7 @@ fun diameter(vararg points: Point): Segment = TODO()
 fun circleByDiameter(diameter: Segment): Circle =
     Circle(
         Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2),
-        diameter.begin.distance((diameter.end))
+        diameter.begin.distance((diameter.end)) / 2
     )
 /**
  * Прямая, заданная точкой point и углом наклона angle (в радианах) по отношению к оси X.
@@ -139,7 +139,20 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point {
+        val sin1 = sin(this.angle)
+        val cos1 = cos(this.angle)
+        val m1 = this.b
+        val sin2 = sin(other.angle)
+        val cos2 = cos(other.angle)
+        val m2 = other.b
+        val x = (m2 * cos1 - m1 * cos2) / (sin1 * cos2 - cos1 * sin2)
+        val y = if (this.angle != PI / 2)
+            (x * sin1 + m1) / cos1
+        else
+            (x * sin2 + m2) / cos2
+        return Point(x, y)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -157,21 +170,33 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line {
+    var angle = atan2(s.end.y - s.begin.y, s.end.x - s.begin.x)
+    angle %= PI
+    return Line(
+        s.begin,
+        if (s.end.x - s.begin.x != 0.0) angle else PI / 2
+    )
+}
 
 /**
  * Средняя (3 балла)
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 
 /**
  * Сложная (5 баллов)
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line {
+    var angle = atan2(b.y - a.y, b.x - a.x)
+    angle += PI / 2
+    angle %= PI
+    return Line(Point((a.x + b.x) / 2, (a.y + b.y) / 2), angle)
+}
 
 /**
  * Средняя (3 балла)

@@ -268,32 +268,31 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
+fun minCircleWith2Point(points2: List<Point>, first: Point, second: Point): Circle {
+    var circle2 = circleByDiameter(Segment(first, second))
+    for (point in points2) {
+        if (!circle2.contains(point))
+            circle2 = circleByThreePoints(first, second, point)
+    }
+    return circle2
+}
+
+fun minCircleWithPoint(points1: List<Point>, point: Point): Circle {
+    val seized1 = mutableListOf<Point>()
+    var circle1 = circleByDiameter(Segment(points1[0], point))
+    for (i in 1 until points1.size) {
+        if (!circle1.contains(points1[i]))
+            circle1 = minCircleWith2Point(seized1, point, points1[i])
+        seized1.add(points1[i])
+    }
+    return circle1
+}
+
 fun minContainingCircle(vararg points: Point): Circle {
     if (points.isEmpty()) throw IllegalArgumentException()
     if (points.toSet().size == 1) return Circle(points[0], 0.0)
     val seized = mutableListOf<Point>()
     var circle = circleByDiameter(Segment(points[0], points[1]))
-
-    fun minCircleWith2Point(points2: List<Point>, first: Point, second: Point): Circle {
-        var circle2 = circleByDiameter(Segment(first, second))
-        for (point in points2) {
-            if (!circle2.contains(point))
-                circle2 = circleByThreePoints(first, second, point)
-        }
-        return circle2
-    }
-
-    fun minCircleWithPoint(points1: List<Point>, point: Point): Circle {
-        val seized1 = mutableListOf<Point>()
-        var circle1 = circleByDiameter(Segment(points[0], point))
-        for (i in 1 until points1.size) {
-            if (!circle1.contains(points1[i]))
-                circle1 = minCircleWith2Point(seized, point, points1[i])
-            seized1.add(points1[i])
-        }
-        return circle1
-    }
-
     seized.add(points[0])
     seized.add(points[1])
     for (i in 2 until points.size) {

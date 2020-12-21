@@ -3,6 +3,7 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
+import ru.spbstu.kotlin.typeclass.classes.defaultValue
 import java.lang.IllegalArgumentException
 import kotlin.math.*
 
@@ -268,6 +269,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
+
 fun minCircleWith2Point(points2: List<Point>, first: Point, second: Point): Circle {
     var circle2 = circleByDiameter(Segment(first, second))
     for (point in points2) {
@@ -280,6 +282,7 @@ fun minCircleWith2Point(points2: List<Point>, first: Point, second: Point): Circ
 fun minCircleWithPoint(points1: List<Point>, point: Point): Circle {
     val seized1 = mutableListOf<Point>()
     var circle1 = circleByDiameter(Segment(points1[0], point))
+    seized1.add(points1[0])
     for (i in 1 until points1.size) {
         if (!circle1.contains(points1[i]))
             circle1 = minCircleWith2Point(seized1, point, points1[i])

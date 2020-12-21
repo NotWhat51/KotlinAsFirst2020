@@ -155,4 +155,18 @@ class Tests {
         assertThrows(IllegalStateException::class.java) { computeDeviceCells(20, ">>>>>>>>>>>>>", 12) }
         assertEquals(listOf(1, 1, 1, 0, 0, -1, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 17))
     }
+
+    @Test
+    @Tag("тестирование")
+    fun myFun() {
+        val list1 = listOf("4628091 Иванов", "4631794 Петров", "6409045 Волкова", "7081356 Кошкина")
+        val list2 = listOf("4628091-Иванов", "4631794 Петров", "6409045 Волкова", "7081356 Кошкина")
+        val list3 = listOf("4628091: Иванов", "4631794: Петров", "6409045 Волкова", "7081356 Кошкина")
+        assertEquals(setOf("Иванов", "Петров"), myFun(list1, "46"))
+        assertEquals(setOf("Волкова"), myFun(list1, "64"))
+        assertEquals(setOf("Кошкина"), myFun(list1, "70"))
+        assertThrows(java.lang.IllegalArgumentException::class.java) { myFun(list2, "46") }
+        assertThrows(java.lang.IllegalArgumentException::class.java) { myFun(list3, "46") }
+    }
+
 }

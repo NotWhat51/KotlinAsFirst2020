@@ -374,4 +374,14 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     }
     return tape
 }
-
+fun myFun(phones: List<String>, prefix: String): Set<String> {
+    val regex = Regex("""\d+\s[А-ЯЁ][а-яё]+""")
+    for (phone in phones) {
+        if (!regex.matches(phone)) throw java.lang.IllegalArgumentException()
+    }
+    val result = mutableSetOf<String>()
+    for (phone in phones) {
+        if (phone.startsWith(prefix)) result.add(phone.split(" ").last())
+    }
+    return result
+}
